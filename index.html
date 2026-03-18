@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ร้านก๋วยเตี๋ยว ดีต่อไต อ.โนนสะอาด จ.อุดรธานี</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root {
+      --green-deep:   #1a5c3a;
+      --green-mid:    #2e8b57;
+      --green-light:  #4caf7d;
+      --green-pale:   #e8f5ee;
+      --green-accent: #00c96e;
+      --amber:        #f59e0b;
+      --amber-light:  #fef3c7;
+      --white:        #ffffff;
+      --gray-50:      #f9fafb;
+      --gray-100:     #f3f4f6;
+      --gray-200:     #e5e7eb;
+      --gray-400:     #9ca3af;
+      --gray-600:     #4b5563;
+      --gray-800:     #1f2937;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,.08);
+      --shadow-md:    0 4px 16px rgba(30,92,58,.12);
+      --shadow-lg:    0 8px 32px rgba(30,92,58,.18);
+      --radius:       12px;
+      --radius-lg:    20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 60%, var(--green-light) 100%);
+      color: var(--white);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .header-badge {
+      background: rgba(255,255,255,.18);
+      border: 1.5px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      font-family: 'Prompt', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 2px 14px;
+      margin-bottom: 4px;
+      color: rgba(255,255,255,.92);
+    }
+
+    .header-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: clamp(1.15rem, 4vw, 1.65rem);
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      text-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+
+    .header-subtitle {
+      font-size: .85rem;
+      color: rgba(255,255,255,.82);
+      margin-top: 2px;
+      text-align: center;
+    }
+
+    /* kidney icon decoration */
+    .header-icon {
+      font-size: 2.2rem;
+      margin-bottom: 2px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    }
+
+    /* ===== TABS ===== */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      margin-top: 14px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: rgba(255,255,255,.15);
+      border: none;
+      color: rgba(255,255,255,.78);
+      font-family: 'Prompt', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      padding: 11px 10px;
+      cursor: pointer;
+      transition: background .2s, color .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover { background: rgba(255,255,255,.22); color: var(--white); }
+
+    .tab-btn.active {
+      background: var(--white);
+      color: var(--green-deep);
+    }
+
+    .tab-btn .tab-icon { font-size: 1.1rem; }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 16px 12px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeIn .28s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== INFO STRIP ===== */
+    .info-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green-pale);
+      border: 1.5px solid #b6dfcc;
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      font-size: .85rem;
+      color: var(--green-deep);
+      font-weight: 500;
+    }
+
+    .info-strip .dot {
+      width: 10px; height: 10px;
+      background: var(--green-accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(0,201,110,.2);
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .table-search-bar {
+      padding: 14px 16px;
+      border-bottom: 1.5px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .table-search-bar input {
+      flex: 1;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: border .2s;
+    }
+
+    .table-search-bar input:focus { border-color: var(--green-mid); }
+
+    .count-badge {
+      background: var(--green-pale);
+      color: var(--green-deep);
+      font-family: 'Prompt', sans-serif;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .table-responsive { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+
+    thead tr {
+      background: linear-gradient(90deg, var(--green-deep), var(--green-mid));
+      color: var(--white);
+    }
+
+    thead th {
+      padding: 13px 14px;
+      text-align: left;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
+
+    thead th:first-child { width: 52px; text-align: center; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--gray-100);
+      transition: background .15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--green-pale); }
+    tbody tr:nth-child(even) { background: var(--gray-50); }
+    tbody tr:nth-child(even):hover { background: var(--green-pale); }
+
+    td { padding: 13px 14px; vertical-align: top; }
+
+    td:first-child {
+      text-align: center;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 700;
+      color: var(--green-mid);
+      font-size: .9rem;
+    }
+
+    .shop-name {
+      font-weight: 600;
+      font-family: 'Prompt', sans-serif;
+      color: var(--gray-800);
+      display: block;
+    }
+
+    .address-text { color: var(--gray-600); font-size: .82rem; line-height: 1.5; font-family: 'Prompt', sans-serif;}
+
+    .date-badge {
+      display: inline-block;
+      background: var(--amber-light);
+      color: #92400e;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: .78rem;
+      font-weight: 600;
+      white-space: nowrap;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    .no-result {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray-400);
+      font-size: .9rem;
+    }
+
+    /* ===== MAP TAB ===== */
+    .map-instruction {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .map-chip {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 999px;
+      padding: 5px 13px;
+      font-size: .8rem;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .map-chip span { font-size: .95rem; }
+
+    #map {
+      width: 100%;
+      height: 520px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 2px solid var(--gray-200);
+      overflow: hidden;
+    }
+
+    /* Leaflet popup custom */
+    .leaflet-popup-content-wrapper {
+      border-radius: var(--radius) !important;
+      box-shadow: var(--shadow-lg) !important;
+      border: 1.5px solid var(--gray-200);
+    }
+
+    .popup-inner { font-family: 'Sarabun', sans-serif; min-width: 160px; }
+    .popup-num {
+      background: var(--green-mid);
+      color: white;
+      border-radius: 6px;
+      display: inline-block;
+      padding: 1px 8px;
+      font-size: .72rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .popup-name { font-weight: 700; font-size: .93rem; color: var(--green-deep); margin-bottom: 2px; }
+    .popup-addr { font-size: .78rem; color: var(--gray-600); line-height: 1.5; }
+    .popup-date { font-size: .72rem; color: #92400e; background: var(--amber-light); border-radius: 4px; padding: 2px 7px; display: inline-block; margin-top: 4px; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--green-deep);
+      color: rgba(255,255,255,.75);
+      text-align: center;
+      padding: 16px 20px;
+      font-size: .82rem;
+      margin-top: auto;
+    }
+
+    footer strong { color: var(--green-accent); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      main { padding: 16px 10px 10px; }
+      thead th, td { padding: 10px 10px; }
+      #map { height: 400px; }
+      .header-title { font-size: 1.05rem; }
+    }
+
+    @media (max-width: 380px) {
+      thead th:nth-child(3) { display: none; }
+      td:nth-child(3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-inner">
+    <div class="header-icon">🍜</div>
+    <div class="header-badge">โครงการส่งเสริมสุขภาพไต</div>
+    <div class="header-title">ร้านก๋วยเตี๋ยว ดีต่อไต<br>อ.โนนสะอาด จ.อุดรธานี</div>
+    <div class="header-subtitle">รายชื่อร้านที่ผ่านการรับรองมาตรฐาน</div>
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" onclick="switchTab('shops')" id="tab-shops" role="tab" aria-selected="true">
+        <span class="tab-icon">🏪</span> รายชื่อร้านค้า
+      </button>
+      <button class="tab-btn" onclick="switchTab('map')" id="tab-map" role="tab" aria-selected="false">
+        <span class="tab-icon">🗺️</span> แผนที่ร้านค้า
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- TAB 1: TABLE -->
+  <div class="tab-panel active" id="panel-shops" role="tabpanel">
+    <div class="info-strip">
+      <div class="dot"></div>
+      ร้านค้าที่ผ่านเกณฑ์การประเมิน "ก๋วยเตี๋ยวดีต่อไต" ในพื้นที่ อ.โนนสะอาด
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-search-bar">
+        <input type="text" id="searchInput" placeholder="🔍  ค้นหาชื่อร้าน หรือที่อยู่..." oninput="filterTable()" />
+        <div class="count-badge" id="countBadge">0 ร้าน</div>
+      </div>
+      <div class="table-responsive">
+        <table id="shopTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ชื่อร้าน</th>
+              <th>ที่อยู่</th>
+              <th>วันที่รับรอง</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="no-result" id="noResult" style="display:none;">ไม่พบข้อมูลที่ค้นหา</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: MAP -->
+  <div class="tab-panel" id="panel-map" role="tabpanel">
+    <div class="info-strip">
+      <div class="dot"></div>
+      แผนที่แสดงตำแหน่งร้านค้าที่เข้าร่วมโครงการในพื้นที่ อ.โนนสะอาด
+    </div>
+    <div class="map-instruction">
+      <div class="map-chip"><span>📍</span> คลิกที่หมุดเพื่อดูข้อมูลร้าน</div>
+      <div class="map-chip"><span>🖱️</span> เลื่อนแผนที่ได้อิสระ</div>
+      <div class="map-chip"><span>🔍</span> ซูมด้วยสองนิ้ว หรือ scroll</div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <strong>ด้วยความปรารถนาดีจาก คปสอ.โนนสะอาด</strong>
+  &nbsp;|&nbsp; โครงการร้านก๋วยเตี๋ยว ดีต่อไต อ.โนนสะอาด จ.อุดรธานี
+</footer>
+
+<script>
+  // ============================================================
+  //  DATA  — แก้ไข / เพิ่มข้อมูลร้านค้าที่นี่
+  // ============================================================
+  const shops = [
+    {
+      id: 1,
+      name: "ร้านก๋วยเตี๋ยวป้าแดง",
+      address: "123 ม.1 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "01/03/2567",
+      lat: 16.99690523732621, 
+      lng: 102.83191941835271
+    },
+    {
+      id: 2,
+      name: "ร้านก๋วยเตี๋ยวต้มยำสมชาย",
+      address: "45 ม.3 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "01/03/2567",
+      lat: 16.97589115771672, 
+      lng: 102.96718857232749
+    },
+    {
+      id: 3,
+      name: "ร้านเจ๊หน่อยก๋วยเตี๋ยว",
+      address: "88 ม.2 ต.บุญทัน อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "15/03/2567",
+      lat: 16.939110857908325,
+      lng:  102.97680160865056
+    },
+    {
+      id: 4,
+      name: "ก๋วยเตี๋ยวหมูตุ๋นลุงสมศักดิ์",
+      address: "12 ม.5 ต.หนองแวง อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "15/03/2567",
+      lat: 16.98968191302795, 
+      lng: 102.99396774494177
+    },
+    {
+      id: 5,
+      name: "ร้านก๋วยเตี๋ยวเรือแม่บุญมี",
+      address: "201 ม.4 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "20/03/2567",
+      lat: 17.077656154604067, 
+      lng: 102.74814867325159
+    },
+    {
+      id: 6,
+      name: "ร้านก๋วยเตี๋ยวพี่ฝน ไข่ต้ม",
+      address: "33 ม.6 ต.บ้านก้อง อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "01/04/2567",
+      lat: 16.879327536628065, 
+      lng: 102.9431559815198
+    },
+    {
+      id: 7,
+      name: "ก๋วยเตี๋ยวหน้าตลาดสดโนนสะอาด",
+      address: "ตลาดสดโนนสะอาด ถ.สุขสันต์ อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "01/04/2567",
+      lat: 16.928600879151357, 
+      lng: 102.84702561828898
+    },
+    {
+      id: 8,
+      name: "ร้านก๋วยเตี๋ยวน้องนิด โลว์โซเดียม",
+      address: "77 ม.7 ต.โพธิ์ศรีสำราญ อ.โนนสะอาด จ.อุดรธานี",
+      certDate: "10/04/2567",
+      lat: 16.971294014049313, 
+      lng: 102.89234421809779
+    },
+  ];
+
+  // ============================================================
+  //  RENDER TABLE
+  // ============================================================
+  function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    const badge = document.getElementById('countBadge');
+    badge.textContent = data.length + ' ร้าน';
+    tbody.innerHTML = '';
+    data.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.id}</td>
+        <td><span class="shop-name">${s.name}</span></td>
+        <td><span class="address-text">${s.address}</span></td>
+        <td><span class="date-badge">📅 ${s.certDate}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function filterTable() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = q === '' ? shops : shops.filter(s =>
+      s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+    document.getElementById('noResult').style.display = filtered.length === 0 ? 'block' : 'none';
+    document.getElementById('shopTable').style.display = filtered.length === 0 ? 'none' : '';
+  }
+
+  renderTable(shops);
+
+  // ============================================================
+  //  TAB SWITCH
+  // ============================================================
+  let mapInit = false;
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById('panel-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
+
+    if (tab === 'map' && !mapInit) {
+      initMap();
+      mapInit = true;
+    }
+  }
+
+  // ============================================================
+  //  LEAFLET MAP
+  // ============================================================
+  function initMap() {
+    // Center: อ.โนนสะอาด
+    const center = [16.947649783334608, 102.90058396351758];
+    const map = L.map('map', {
+      center: center,
+      zoom: 13,
+      minZoom: 8,
+      maxZoom: 11,
+      maxBounds: [
+        [16.86, 102.79],
+        [17.06, 103.03]
+      ],
+      maxBoundsViscosity: 0.85
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Custom marker icon
+    function makeIcon(num) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="
+          background: linear-gradient(135deg,#1a5c3a,#2e8b57);
+          color:#fff;
+          width:34px;height:34px;
+          border-radius:50% 50% 50% 0;
+          transform:rotate(-45deg);
+          display:flex;align-items:center;justify-content:center;
+          box-shadow:0 3px 10px rgba(0,0,0,.25);
+          border:2px solid #fff;
+          font-family:'Prompt',sans-serif;font-weight:700;font-size:.75rem;
+        ">
+          <span style="transform:rotate(45deg)">${num}</span>
+        </div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -36]
+      });
+    }
+
+    shops.forEach(s => {
+      const marker = L.marker([s.lat, s.lng], { icon: makeIcon(s.id) }).addTo(map);
+      marker.bindPopup(`
+        <div class="popup-inner">
+          <div class="popup-num">ร้านที่ ${s.id}</div>
+          <div class="popup-name">${s.name}</div>
+          <div class="popup-addr">${s.address}</div>
+          <div class="popup-date">📅 รับรอง ${s.certDate}</div>
+        </div>
+      `);
+    });
+  }
+</script>
+</body>
+</html>
