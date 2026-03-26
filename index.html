@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Leaflet Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -55,7 +55,7 @@
       padding: 0;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
       box-shadow: var(--shadow-lg);
     }
 
@@ -67,6 +67,37 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
+      position: relative; /* สำหรับให้ปุ่ม absolute อ้างอิง */
+    }
+
+    /* ปุ่มสมัครเข้าร่วมโครงการ */
+    .btn-register {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--amber), #d97706);
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      color: #fff;
+    }
+
+    .btn-register svg {
+      width: 16px;
+      height: 16px;
     }
 
     .header-badge {
@@ -98,7 +129,6 @@
       text-align: center;
     }
 
-    /* kidney icon decoration */
     .header-icon {
       font-size: 2.2rem;
       margin-bottom: 2px;
@@ -134,12 +164,7 @@
     }
 
     .tab-btn:hover { background: rgba(255,255,255,.22); color: var(--white); }
-
-    .tab-btn.active {
-      background: var(--white);
-      color: var(--green-deep);
-    }
-
+    .tab-btn.active { background: var(--white); color: var(--green-deep); }
     .tab-btn .tab-icon { font-size: 1.1rem; }
 
     /* ===== MAIN CONTENT ===== */
@@ -185,7 +210,7 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
       overflow: hidden;
-		font-family: 'Prompt', sans-serif;
+      font-family: 'Prompt', sans-serif;
     }
 
     .table-search-bar {
@@ -245,34 +270,17 @@
 
     thead th:first-child { width: 52px; text-align: center; }
 
-    tbody tr {
-      border-bottom: 1px solid var(--gray-100);
-      transition: background .15s;
-    }
-
+    tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .15s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: var(--green-pale); }
     tbody tr:nth-child(even) { background: var(--gray-50); }
     tbody tr:nth-child(even):hover { background: var(--green-pale); }
 
     td { padding: 13px 14px; vertical-align: top; }
+    td:first-child { text-align: center; font-family: 'Prompt', sans-serif; font-weight: 700; color: var(--green-mid); font-size: .9rem; }
 
-    td:first-child {
-      text-align: center;
-      font-family: 'Prompt', sans-serif;
-      font-weight: 700;
-      color: var(--green-mid);
-      font-size: .9rem;
-    }
-
-    .shop-name {
-      font-weight: 600;
-      color: var(--gray-800);
-      display: block;
-    }
-
+    .shop-name { font-weight: 600; color: var(--gray-800); display: block; }
     .address-text { color: var(--gray-600); font-size: .82rem; line-height: 1.5; }
-
     .date-badge {
       display: inline-block;
       background: var(--amber-light);
@@ -284,21 +292,10 @@
       white-space: nowrap;
     }
 
-    .no-result {
-      text-align: center;
-      padding: 40px;
-      color: var(--gray-400);
-      font-size: .9rem;
-    }
+    .no-result { text-align: center; padding: 40px; color: var(--gray-400); font-size: .9rem; }
 
     /* ===== MAP TAB ===== */
-    .map-instruction {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
+    .map-instruction { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
     .map-chip {
       background: var(--white);
       border: 1.5px solid var(--gray-200);
@@ -310,7 +307,6 @@
       align-items: center;
       gap: 5px;
     }
-
     .map-chip span { font-size: .95rem; }
 
     #map {
@@ -320,6 +316,7 @@
       box-shadow: var(--shadow-md);
       border: 2px solid var(--gray-200);
       overflow: hidden;
+      z-index: 1; /* ป้องกันไม่ให้ทะลุ Header */
     }
 
     /* Leaflet popup custom */
@@ -328,7 +325,6 @@
       box-shadow: var(--shadow-lg) !important;
       border: 1.5px solid var(--gray-200);
     }
-
     .popup-inner { font-family: 'Prompt', sans-serif; min-width: 160px; }
     .popup-num {
       background: var(--green-mid);
@@ -346,7 +342,7 @@
     .popup-nav-btn {
       display: block;
       margin-top: 8px;
-      background: linear-gradient(135deg, var(--blue-deep), var(--green-mid));
+      background: linear-gradient(135deg, #1f2937, var(--green-mid));
       color: #fff;
       text-align: center;
       padding: 7px 10px;
@@ -357,7 +353,7 @@
       font-family: 'Prompt', sans-serif;
       transition: opacity .2s;
     }
-    .popup-nav-btn:hover { opacity: .85; }
+    .popup-nav-btn:hover { opacity: .85; color: #fff; }
 
     /* ===== FOOTER ===== */
     footer {
@@ -368,15 +364,22 @@
       font-size: .82rem;
       margin-top: auto;
     }
-
     footer strong { color: var(--green-accent); }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
+      .btn-register {
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        font-size: 0.75rem;
+      }
+      .btn-register span { display: none; /* ซ่อนข้อความ เหลือแต่ไอคอนถ่าจอมือถือเล็กมาก */ }
+      
       main { padding: 16px 10px 10px; }
       thead th, td { padding: 10px 10px; }
       #map { height: 400px; }
-      .header-title { font-size: 1.05rem; }
+      .header-title { font-size: 1.05rem; margin-top: 15px; } /* ขยับชื่อลงมาหลบปุ่ม */
     }
 
     @media (max-width: 380px) {
@@ -390,10 +393,19 @@
 <!-- ===== HEADER ===== -->
 <header>
   <div class="header-inner">
+    <!-- ปุ่มสมัครเข้าร่วมโครงการ -->
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuRn99YMZ3M32Y_TzuCqAHKWcv3EyIByCYdG6o0uE23PzGtA/viewform" target="_blank" class="btn-register">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+      สมัครเข้าร่วมโครงการ
+    </a>
+
     <div class="header-icon">🍜</div>
     <div class="header-badge">โครงการส่งเสริมสุขภาพไต</div>
     <div class="header-title">ร้านก๋วยเตี๋ยว ดีต่อไต<br>อ.โนนสะอาด จ.อุดรธานี</div>
     <div class="header-subtitle">รายชื่อร้านที่ผ่านการรับรองมาตรฐาน</div>
+    
     <nav class="tab-nav" role="tablist">
       <button class="tab-btn active" onclick="switchTab('shops')" id="tab-shops" role="tab" aria-selected="true">
         <span class="tab-icon">🏪</span> รายชื่อร้านค้า
@@ -430,7 +442,10 @@
               <th>วันที่รับรอง</th>
             </tr>
           </thead>
-          <tbody id="tableBody"></tbody>
+          <tbody id="tableBody">
+             <!-- สถานะโหลดข้อมูลเบื้องต้น -->
+             <tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--gray-400);">กำลังดึงข้อมูลจากฐานข้อมูล...</td></tr>
+          </tbody>
         </table>
         <div class="no-result" id="noResult" style="display:none;">ไม่พบข้อมูลที่ค้นหา</div>
       </div>
@@ -445,7 +460,6 @@
     </div>
     <div class="map-instruction">
       <div class="map-chip"><span>📍</span> คลิกที่หมุดเพื่อดูข้อมูลร้าน</div>
-</div>
     </div>
     <div id="map"></div>
   </div>
@@ -460,74 +474,54 @@
 
 <script>
   // ============================================================
-  //  DATA  — แก้ไข / เพิ่มข้อมูลร้านค้าที่นี่
+  //  🚨 นำ Web App URL ของ backend_shops.gs มาใส่ที่นี่ 🚨
   // ============================================================
-const shops = [
-    {
-      id: 1,
-      name: "ร้านก๋วยเตี๋ยวป้าแดง",
-      address: "123 ม.1 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "01/03/2567",
-      lat: 16.99690523732621, 
-      lng: 102.83191941835271
-    },
-    {
-      id: 2,
-      name: "ร้านก๋วยเตี๋ยวต้มยำสมชาย",
-      address: "45 ม.3 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "01/03/2567",
-      lat: 16.97589115771672, 
-      lng: 102.96718857232749
-    },
-    {
-      id: 3,
-      name: "ร้านเจ๊หน่อยก๋วยเตี๋ยว",
-      address: "88 ม.2 ต.บุญทัน อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "15/03/2567",
-      lat: 16.939110857908325,
-      lng:  102.97680160865056
-    },
-    {
-      id: 4,
-      name: "ก๋วยเตี๋ยวหมูตุ๋นลุงสมศักดิ์",
-      address: "12 ม.5 ต.หนองแวง อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "15/03/2567",
-      lat: 16.98968191302795, 
-      lng: 102.99396774494177
-    },
-    {
-      id: 5,
-      name: "ร้านก๋วยเตี๋ยวเรือแม่บุญมี",
-      address: "201 ม.4 ต.โนนสะอาด อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "20/03/2567",
-      lat: 17.077656154604067, 
-      lng: 102.74814867325159
-    },
-    {
-      id: 6,
-      name: "ร้านก๋วยเตี๋ยวพี่ฝน ไข่ต้ม",
-      address: "33 ม.6 ต.บ้านก้อง อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "01/04/2567",
-      lat: 16.879327536628065, 
-      lng: 102.9431559815198
-    },
-    {
-      id: 7,
-      name: "ก๋วยเตี๋ยวหน้าตลาดสดโนนสะอาด",
-      address: "ตลาดสดโนนสะอาด ถ.สุขสันต์ อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "01/04/2567",
-      lat: 16.928600879151357, 
-      lng: 102.84702561828898
-    },
-    {
-      id: 8,
-      name: "ร้านก๋วยเตี๋ยวน้องนิด โลว์โซเดียม",
-      address: "77 ม.7 ต.โพธิ์ศรีสำราญ อ.โนนสะอาด จ.อุดรธานี",
-      certDate: "10/04/2567",
-      lat: 16.971294014049313, 
-      lng: 102.89234421809779
-    },
-  ];
+  const API_URL = "https://script.google.com/macros/s/AKfycbx3sPf1gyo0YlXijX-lgRODt0rZOhUEz68QpPZ3VeZ2VSKs5m15wsKPvsZ5bJDoDIBWfw/exec"; 
+
+  // ตัวแปรเก็บข้อมูลร้านค้าทั้งหมดที่ได้จาก API
+  let shops = []; 
+  let mapInit = false;
+
+  // ============================================================
+  //  FETCH DATA FROM GOOGLE SHEETS
+  // ============================================================
+  async function fetchShopsData() {
+    const tbody = document.getElementById('tableBody');
+    
+    if (API_URL === "YOUR_WEB_APP_URL_HERE") {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red; font-weight: bold;">กรุณาใส่ API_URL ในโค้ดก่อนใช้งาน</td></tr>`;
+      return;
+    }
+
+    try {
+      const response = await fetch(API_URL);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        // แปลงข้อมูลจาก Sheet ให้อยู่ในรูปแบบที่ระบบนำไปใช้ต่อได้
+        shops = result.data.map((row, index) => ({
+          id: index + 1,
+          name: row['ชื่อร้าน'] || '',
+          address: row['ที่อยู่'] || '',
+          certDate: row['วันที่รับรอง'] || '',
+          lat: parseFloat(row['lat']) || 0,
+          lng: parseFloat(row['lng']) || 0
+        }));
+        
+        renderTable(shops);
+      } else {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">เกิดข้อผิดพลาด: ${result.message}</td></tr>`;
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: red;">ไม่สามารถเชื่อมต่อฐานข้อมูลได้</td></tr>`;
+    }
+  }
+
+  // เรียกใช้ฟังก์ชันดึงข้อมูลเมื่อเว็บโหลดเสร็จ
+  window.addEventListener('DOMContentLoaded', () => {
+    fetchShopsData();
+  });
 
   // ============================================================
   //  RENDER TABLE
@@ -536,7 +530,14 @@ const shops = [
     const tbody = document.getElementById('tableBody');
     const badge = document.getElementById('countBadge');
     badge.textContent = data.length + ' ร้าน';
+    
     tbody.innerHTML = '';
+    
+    if(data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--gray-400);">ไม่มีข้อมูลร้านค้า</td></tr>`;
+        return;
+    }
+
     data.forEach(s => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -559,19 +560,16 @@ const shops = [
     document.getElementById('shopTable').style.display = filtered.length === 0 ? 'none' : '';
   }
 
-  renderTable(shops);
-
   // ============================================================
   //  TAB SWITCH
   // ============================================================
-  let mapInit = false;
-
   function switchTab(tab) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-selected', 'false');
     });
+    
     document.getElementById('panel-' + tab).classList.add('active');
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
@@ -628,19 +626,22 @@ const shops = [
       });
     }
 
+    // วนลูปสร้างหมุดเฉพาะร้านที่มีค่า lat/lng ถูกต้อง
     shops.forEach(s => {
-      const marker = L.marker([s.lat, s.lng], { icon: makeIcon(s.id) }).addTo(map);
-      marker.bindPopup(`
-        <div class="popup-inner">
-          <div class="popup-num">ร้านที่ ${s.id}</div>
-          <div class="popup-name">${s.name}</div>
-          <div class="popup-addr">${s.address}</div>
-          <div class="popup-date">📅 รับรอง ${s.certDate}</div>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-nav-btn">
-            🧭 นำทางไปร้านนี้
-          </a>
-        </div>
-      `);
+      if(s.lat && s.lng) {
+        const marker = L.marker([s.lat, s.lng], { icon: makeIcon(s.id) }).addTo(map);
+        marker.bindPopup(`
+          <div class="popup-inner">
+            <div class="popup-num">ร้านที่ ${s.id}</div>
+            <div class="popup-name">${s.name}</div>
+            <div class="popup-addr">${s.address}</div>
+            <div class="popup-date">📅 รับรอง ${s.certDate}</div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-nav-btn">
+              🧭 นำทางไปร้านนี้
+            </a>
+          </div>
+        `);
+      }
     });
   }
 </script>
